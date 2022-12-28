@@ -35,4 +35,30 @@ defmodule MoriawaseWeb.ConnCase do
     Moriawase.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
+
+  @doc """
+  Setup helper that registers and logs in members.
+
+      setup :register_and_log_in_member
+
+  It stores an updated connection and a registered member in the
+  test context.
+  """
+  def register_and_log_in_member(%{conn: conn}) do
+    member = Moriawase.AccountsFixtures.member_fixture()
+    %{conn: log_in_member(conn, member), member: member}
+  end
+
+  @doc """
+  Logs the given `member` into the `conn`.
+
+  It returns an updated `conn`.
+  """
+  def log_in_member(conn, member) do
+    token = Moriawase.Accounts.generate_member_session_token(member)
+
+    conn
+    |> Phoenix.ConnTest.init_test_session(%{})
+    |> Plug.Conn.put_session(:member_token, token)
+  end
 end

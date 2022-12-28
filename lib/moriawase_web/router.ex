@@ -1,6 +1,8 @@
 defmodule MoriawaseWeb.Router do
   use MoriawaseWeb, :router
 
+  import MoriawaseWeb.MemberAuth
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -8,6 +10,7 @@ defmodule MoriawaseWeb.Router do
     plug :put_root_layout, {MoriawaseWeb.LayoutView, :root}
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug :fetch_current_member
   end
 
   pipeline :api do
@@ -52,5 +55,38 @@ defmodule MoriawaseWeb.Router do
 
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+  end
+
+  ## Authentication routes
+
+  scope "/", MoriawaseWeb do
+    pipe_through [:browser, :redirect_if_member_is_authenticated]
+
+    get "/members/register", MemberRegistrationController, :new
+    post "/members/register", MemberRegistrationController, :create
+    get "/members/log_in", MemberSessionController, :new
+    post "/members/log_in", MemberSessionController, :create
+    get "/members/reset_password", MemberResetPasswordController, :new
+    post "/members/reset_password", MemberResetPasswordController, :create
+    get "/members/reset_password/:token", MemberResetPasswordController, :edit
+    put "/members/reset_password/:token", MemberResetPasswordController, :update
+  end
+
+  scope "/", MoriawaseWeb do
+    pipe_through [:browser, :require_authenticated_member]
+
+    get "/members/settings", MemberSettingsController, :edit
+    put "/members/settings", MemberSettingsController, :update
+    get "/members/settings/confirm_email/:token", MemberSettingsController, :confirm_email
+  end
+
+  scope "/", MoriawaseWeb do
+    pipe_through [:browser]
+
+    delete "/members/log_out", MemberSessionController, :delete
+    get "/members/confirm", MemberConfirmationController, :new
+    post "/members/confirm", MemberConfirmationController, :create
+    get "/members/confirm/:token", MemberConfirmationController, :edit
+    post "/members/confirm/:token", MemberConfirmationController, :update
   end
 end

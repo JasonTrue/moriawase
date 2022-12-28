@@ -10,7 +10,9 @@ import Config
 config :moriawase,
   ecto_repos: [Moriawase.Repo]
 
-config :moriawase, Moriawase.Repo, migration_primary_key: [id: :uuid, type: :binary_id]
+config :moriawase, Moriawase.Repo,
+  migration_timestamps: [type: :utc_datetime],
+  migration_primary_key: [id: :uuid, type: :binary_id]
 
 # Configures the endpoint
 config :moriawase, MoriawaseWeb.Endpoint,
