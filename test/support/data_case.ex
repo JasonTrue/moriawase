@@ -24,6 +24,7 @@ defmodule Moriawase.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Moriawase.DataCase
+      import Moriawase.Factory
     end
   end
 
