@@ -10,7 +10,9 @@ defmodule Moriawase.AccountsFixtures do
   def valid_member_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
       email: unique_member_email(),
-      password: valid_member_password()
+      password: valid_member_password(),
+      display_name: Faker.Person.name(),
+      username: Faker.Internet.user_name()
     })
   end
 

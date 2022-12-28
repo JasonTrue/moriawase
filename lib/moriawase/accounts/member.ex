@@ -6,6 +6,8 @@ defmodule Moriawase.Accounts.Member do
     field :email, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
+    field :username, :string
+    field :display_name, :string
     field :confirmed_at, :naive_datetime
 
     timestamps()
@@ -30,9 +32,11 @@ defmodule Moriawase.Accounts.Member do
   """
   def registration_changeset(member, attrs, opts \\ []) do
     member
-    |> cast(attrs, [:email, :password])
+    |> cast(attrs, [:email, :password, :username, :display_name])
     |> validate_email()
     |> validate_password(opts)
+    |> validate_username()
+    |> validate_display_name()
   end
 
   defp validate_email(changeset) do
@@ -47,12 +51,25 @@ defmodule Moriawase.Accounts.Member do
   defp validate_password(changeset, opts) do
     changeset
     |> validate_required([:password])
-    |> validate_length(:password, min: 12, max: 72)
+    |> validate_length(:password, min: 12, max: 200)
     # |> validate_format(:password, ~r/[a-z]/, message: "at least one lower case character")
     # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
     # |> validate_format(:password, ~r/[!?@#$%^&*_0-9]/, message: "at least one digit or punctuation character")
     |> maybe_hash_password(opts)
   end
+
+  defp validate_username(changeset) do
+    changeset
+    |> validate_required([:username])
+    |> validate_length(:username, min: 1, max: 50)
+  end
+
+  defp validate_display_name(changeset) do
+    changeset
+    |> validate_required([:display_name])
+    |> validate_length(:display_name, min: 1, max: 60)
+  end
+
 
   defp maybe_hash_password(changeset, opts) do
     hash_password? = Keyword.get(opts, :hash_password, true)

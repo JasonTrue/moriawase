@@ -68,10 +68,10 @@ defmodule Moriawase.AccountsTest do
     end
 
     test "validates maximum values for email and password for security" do
-      too_long = String.duplicate("db", 100)
+      too_long = String.duplicate("db", 201)
       {:error, changeset} = Accounts.register_member(%{email: too_long, password: too_long})
       assert "should be at most 160 character(s)" in errors_on(changeset).email
-      assert "should be at most 72 character(s)" in errors_on(changeset).password
+      assert "should be at most 200 character(s)" in errors_on(changeset).password
     end
 
     test "validates email uniqueness" do
@@ -97,7 +97,7 @@ defmodule Moriawase.AccountsTest do
   describe "change_member_registration/2" do
     test "returns a changeset" do
       assert %Ecto.Changeset{} = changeset = Accounts.change_member_registration(%Member{})
-      assert changeset.required == [:password, :email]
+      assert Enum.sort(changeset.required) == Enum.sort([:display_name, :username, :password, :email])
     end
 
     test "allows fields to be set" do
@@ -273,12 +273,12 @@ defmodule Moriawase.AccountsTest do
     end
 
     test "validates maximum values for password for security", %{member: member} do
-      too_long = String.duplicate("db", 100)
+      too_long = String.duplicate("db", 201)
 
       {:error, changeset} =
         Accounts.update_member_password(member, valid_member_password(), %{password: too_long})
 
-      assert "should be at most 72 character(s)" in errors_on(changeset).password
+      assert "should be at most 200 character(s)" in errors_on(changeset).password
     end
 
     test "validates current password", %{member: member} do
@@ -482,9 +482,9 @@ defmodule Moriawase.AccountsTest do
     end
 
     test "validates maximum values for password for security", %{member: member} do
-      too_long = String.duplicate("db", 100)
+      too_long = String.duplicate("db", 201)
       {:error, changeset} = Accounts.reset_member_password(member, %{password: too_long})
-      assert "should be at most 72 character(s)" in errors_on(changeset).password
+      assert "should be at most 200 character(s)" in errors_on(changeset).password
     end
 
     test "updates the password", %{member: member} do
