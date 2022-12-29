@@ -70,7 +70,6 @@ defmodule Moriawase.Accounts.Member do
     |> validate_length(:display_name, min: 1, max: 60)
   end
 
-
   defp maybe_hash_password(changeset, opts) do
     hash_password? = Keyword.get(opts, :hash_password, true)
     password = get_change(changeset, :password)

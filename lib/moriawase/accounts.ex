@@ -168,7 +168,8 @@ defmodule Moriawase.Accounts do
   """
   def deliver_update_email_instructions(%Member{} = member, current_email, update_email_url_fun)
       when is_function(update_email_url_fun, 1) do
-    {encoded_token, member_token} = MemberToken.build_email_token(member, "change:#{current_email}")
+    {encoded_token, member_token} =
+      MemberToken.build_email_token(member, "change:#{current_email}")
 
     Repo.insert!(member_token)
     MemberNotifier.deliver_update_email_instructions(member, update_email_url_fun.(encoded_token))
@@ -263,7 +264,11 @@ defmodule Moriawase.Accounts do
     else
       {encoded_token, member_token} = MemberToken.build_email_token(member, "confirm")
       Repo.insert!(member_token)
-      MemberNotifier.deliver_confirmation_instructions(member, confirmation_url_fun.(encoded_token))
+
+      MemberNotifier.deliver_confirmation_instructions(
+        member,
+        confirmation_url_fun.(encoded_token)
+      )
     end
   end
 
@@ -304,7 +309,11 @@ defmodule Moriawase.Accounts do
       when is_function(reset_password_url_fun, 1) do
     {encoded_token, member_token} = MemberToken.build_email_token(member, "reset_password")
     Repo.insert!(member_token)
-    MemberNotifier.deliver_reset_password_instructions(member, reset_password_url_fun.(encoded_token))
+
+    MemberNotifier.deliver_reset_password_instructions(
+      member,
+      reset_password_url_fun.(encoded_token)
+    )
   end
 
   @doc """

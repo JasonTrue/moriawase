@@ -101,7 +101,12 @@ defmodule MoriawaseWeb.MemberSettingsControllerTest do
       %{token: token, email: email}
     end
 
-    test "updates the member email once", %{conn: conn, member: member, token: token, email: email} do
+    test "updates the member email once", %{
+      conn: conn,
+      member: member,
+      token: token,
+      email: email
+    } do
       conn = get(conn, Routes.member_settings_path(conn, :confirm_email, token))
       assert redirected_to(conn) == Routes.member_settings_path(conn, :edit)
       assert get_flash(conn, :info) =~ "Email changed successfully"

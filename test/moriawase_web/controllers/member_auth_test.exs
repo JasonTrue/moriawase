@@ -36,7 +36,9 @@ defmodule MoriawaseWeb.MemberAuthTest do
     end
 
     test "writes a cookie if remember_me is configured", %{conn: conn, member: member} do
-      conn = conn |> fetch_cookies() |> MemberAuth.log_in_member(member, %{"remember_me" => "true"})
+      conn =
+        conn |> fetch_cookies() |> MemberAuth.log_in_member(member, %{"remember_me" => "true"})
+
       assert get_session(conn, :member_token) == conn.cookies[@remember_me_cookie]
 
       assert %{value: signed_token, max_age: max_age} = conn.resp_cookies[@remember_me_cookie]
@@ -85,7 +87,10 @@ defmodule MoriawaseWeb.MemberAuthTest do
   describe "fetch_current_member/2" do
     test "authenticates member from session", %{conn: conn, member: member} do
       member_token = Accounts.generate_member_session_token(member)
-      conn = conn |> put_session(:member_token, member_token) |> MemberAuth.fetch_current_member([])
+
+      conn =
+        conn |> put_session(:member_token, member_token) |> MemberAuth.fetch_current_member([])
+
       assert conn.assigns.current_member.id == member.id
     end
 
@@ -115,7 +120,11 @@ defmodule MoriawaseWeb.MemberAuthTest do
 
   describe "redirect_if_member_is_authenticated/2" do
     test "redirects if member is authenticated", %{conn: conn, member: member} do
-      conn = conn |> assign(:current_member, member) |> MemberAuth.redirect_if_member_is_authenticated([])
+      conn =
+        conn
+        |> assign(:current_member, member)
+        |> MemberAuth.redirect_if_member_is_authenticated([])
+
       assert conn.halted
       assert redirected_to(conn) == "/"
     end
@@ -162,7 +171,9 @@ defmodule MoriawaseWeb.MemberAuthTest do
     end
 
     test "does not redirect if member is authenticated", %{conn: conn, member: member} do
-      conn = conn |> assign(:current_member, member) |> MemberAuth.require_authenticated_member([])
+      conn =
+        conn |> assign(:current_member, member) |> MemberAuth.require_authenticated_member([])
+
       refute conn.halted
       refute conn.status
     end

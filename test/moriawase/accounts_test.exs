@@ -97,7 +97,9 @@ defmodule Moriawase.AccountsTest do
   describe "change_member_registration/2" do
     test "returns a changeset" do
       assert %Ecto.Changeset{} = changeset = Accounts.change_member_registration(%Member{})
-      assert Enum.sort(changeset.required) == Enum.sort([:display_name, :username, :password, :email])
+
+      assert Enum.sort(changeset.required) ==
+               Enum.sort([:display_name, :username, :password, :email])
     end
 
     test "allows fields to be set" do
@@ -168,7 +170,10 @@ defmodule Moriawase.AccountsTest do
 
     test "applies the email without persisting it", %{member: member} do
       email = unique_member_email()
-      {:ok, member} = Accounts.apply_member_email(member, valid_member_password(), %{email: email})
+
+      {:ok, member} =
+        Accounts.apply_member_email(member, valid_member_password(), %{email: email})
+
       assert member.email == email
       assert Accounts.get_member!(member.id).email != email
     end
@@ -223,7 +228,9 @@ defmodule Moriawase.AccountsTest do
     end
 
     test "does not update email if member email changed", %{member: member, token: token} do
-      assert Accounts.update_member_email(%{member | email: "current@example.com"}, token) == :error
+      assert Accounts.update_member_email(%{member | email: "current@example.com"}, token) ==
+               :error
+
       assert Repo.get!(Member, member.id).email == member.email
       assert Repo.get_by(MemberToken, member_id: member.id)
     end
@@ -488,7 +495,9 @@ defmodule Moriawase.AccountsTest do
     end
 
     test "updates the password", %{member: member} do
-      {:ok, updated_member} = Accounts.reset_member_password(member, %{password: "new valid password"})
+      {:ok, updated_member} =
+        Accounts.reset_member_password(member, %{password: "new valid password"})
+
       assert is_nil(updated_member.password)
       assert Accounts.get_member_by_email_and_password(member.email, "new valid password")
     end

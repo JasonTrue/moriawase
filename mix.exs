@@ -50,7 +50,9 @@ defmodule Moriawase.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:ex_machina, "~> 2.7", only: [:dev, :test]},
-      {:faker, "~> 0.17.0", only: [:dev, :test]}]
+      {:faker, "~> 0.17.0", only: [:dev, :test]},
+      {:tailwind, "~> 0.1.9", runtime: Mix.env() == :dev}
+    ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
